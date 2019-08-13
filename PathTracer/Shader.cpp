@@ -1,4 +1,4 @@
-﻿#include "Shader.h"
+#include "Shader.h"
 #include "Loader.h"
 
 #include <iostream>
@@ -26,20 +26,21 @@ namespace GLSLPathTracer
         const GLchar *src = (const GLchar *)source.c_str();
         glShaderSource(_object, 1, &src, 0);
         glCompileShader(_object);
-        GLint success = 0;
+        GLint success;
+        GLint logSize;
         glGetShaderiv(_object, GL_COMPILE_STATUS, &success);
-        if (success == GL_FALSE)
+        glGetShaderiv(_object, GL_INFO_LOG_LENGTH, &logSize);
+        
+        if (logSize > 0)
         {
-            std::string msg("Error while compiling shader\n");
-            GLint logSize = 0;
-            glGetShaderiv(_object, GL_INFO_LOG_LENGTH, &logSize);
+            std::string msg ("Error while compiling shader\n");
             char *info = new char[logSize + 1];
             glGetShaderInfoLog(_object, logSize, NULL, info);
             msg += info;
             delete[] info;
             glDeleteShader(_object);
             _object = 0;
-            Log("Shader compilation error %s\n", msg);
+            Log("Shader compilation error\n");
             throw std::runtime_error(msg);
         }
     }

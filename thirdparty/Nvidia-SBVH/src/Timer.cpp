@@ -27,7 +27,6 @@
 
 #include "Timer.h"
 #include <iostream>
-#include <windows.h>
 
 using namespace FW;
 
@@ -40,22 +39,22 @@ S64 Timer::s_prevTicks          = 0;
 
 void Timer::staticInit(void)
 {
-    LARGE_INTEGER freq;
-	if (!QueryPerformanceFrequency(&freq))
-	{
-		std::cout << "Timer Error: QueryPerformanceFrequency" << std::endl;
-		exit(0);
-	}
-    s_ticksToSecsCoef = max(1.0 / (F64)freq.QuadPart, 0.0);
+//    LARGE_INTEGER freq;
+//    if (!QueryPerformanceFrequency(&freq))
+//    {
+//        std::cout << "Timer Error: QueryPerformanceFrequency" << std::endl;
+//        exit(0);
+//    }
+//    s_ticksToSecsCoef = max(1.0 / (F64)freq.QuadPart, 0.0);
  }
 
 S64 Timer::queryTicks(void)
 {
-	LARGE_INTEGER ticks;
-	QueryPerformanceCounter(&ticks);
-	ticks.QuadPart = max(s_prevTicks, ticks.QuadPart);
-	s_prevTicks = ticks.QuadPart; // increasing little endian => thread-safe
-	return ticks.QuadPart;
+//    LARGE_INTEGER ticks;
+//    QueryPerformanceCounter(&ticks);
+//    ticks.QuadPart = max(s_prevTicks, ticks.QuadPart);
+//    s_prevTicks = ticks.QuadPart; // increasing little endian => thread-safe
+//    return ticks.QuadPart;
 }
 
 //------------------------------------------------------------------------

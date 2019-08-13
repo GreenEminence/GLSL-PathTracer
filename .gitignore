@@ -2,6 +2,7 @@
 
 .vs/
 bin/
+build/
 PathTracer/Release/
 PathTracer/Debug/
 Nvidia-SBVH/Release/

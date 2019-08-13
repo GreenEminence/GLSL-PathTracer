@@ -17,11 +17,6 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-static void glfw_error_callback(int error, const char* description)
-{
-    fprintf(stderr, "Glfw Error %d: %s\n", error, description);
-}
-
 
 using namespace glm;
 using namespace std;
@@ -158,20 +153,26 @@ void update(float secondsElapsed, GLFWwindow *window)
     }
 }
 
-void main()
+int main()
 {
-	srand(unsigned int(time(0)));
+//    srand(unsigned int(time(0)));
 
     int currentSceneIndex = 0;
 	loadScene(currentSceneIndex);
+    
+    glfwInit();
+    
+    const char* glsl_version = "#version 150";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
 
 	GLFWwindow *window;
-	glfwInit();
 	window = glfwCreateWindow((int)scene->renderOptions.resolution.x, (int)scene->renderOptions.resolution.y, "PathTracer", 0, 0);
 	glfwSetWindowPos(window, 300, 100);
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	//glfwSetCursorPos(window, 0, 0);
 	glfwMakeContextCurrent(window);
+    glewExperimental = GL_TRUE;
 	glfwSwapInterval(0);
 	glewInit();
 
@@ -179,36 +180,16 @@ void main()
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
-
-#if __APPLE__
-// GL 3.2 + GLSL 150
-    const char* glsl_version = "#version 150";
-    /*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
-    */
-#else
-    // GL 3.0 + GLSL 130
-    const char* glsl_version = "#version 130";
-    //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
-#endif
 
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     if (!initRenderer())
-        return;
+        return 0;
 
 	double lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window))

@@ -39,8 +39,6 @@ freely, subject to the following restrictions:
 namespace GLSLPathTracer
 {
 
-    static const float M_PI = 3.14159265358979323846f;
-
     static const int kMaxLineLength = 2048;
     int(*Log)(const char* szFormat, ...) = printf;
 
@@ -62,7 +60,10 @@ namespace GLSLPathTracer
         int vertCount = int(attrib.vertices.size() / 3);
         size_t vertStartIndex = scene->vertexData.size();
         for (int i = 0; i < vertCount; i++)
-            scene->vertexData.push_back(VertexData{ glm::vec3(attrib.vertices[3 * i + 0], attrib.vertices[3 * i + 1], attrib.vertices[3 * i + 2]) });
+        {
+            VertexData vtxData = { glm::vec3(attrib.vertices[3 * i + 0], attrib.vertices[3 * i + 1], attrib.vertices[3 * i + 2]) };
+            scene->vertexData.push_back(vtxData);
+        }
 
         // Loop over shapes
         for (size_t s = 0; s < shapes.size(); s++)
@@ -121,8 +122,10 @@ namespace GLSLPathTracer
                     n[0] = n[1] = n[2] = flatNormal;
                 }
 
-                scene->triangleIndices.push_back(TriangleData{ indices });
-                scene->normalTexData.push_back(NormalTexData{ n[0], n[1], n[2], t[0], t[1], t[2] });
+                TriangleData triData = { indices };
+                NormalTexData nrmData = { {n[0], n[1], n[2]}, {t[0], t[1], t[2]} };
+                scene->triangleIndices.push_back(triData);
+                scene->normalTexData.push_back(nrmData);
 
                 index_offset += fv;
             }
@@ -133,7 +136,7 @@ namespace GLSLPathTracer
     Scene* LoadScene(const std::string &filename)
     {
         FILE* file;
-        fopen_s(&file, filename.c_str(), "r");
+        file = fopen(filename.c_str(), "r");
 
         if (!file)
         {
@@ -259,7 +262,8 @@ namespace GLSLPathTracer
                 // add material to map
                 if (materialMap.find(name) == materialMap.end()) // New material
                 {
-                    materialMap[name] = Material{ material, materialCount++ };
+                    Material tmpMat = { material, materialCount++ };
+                    materialMap[name] = tmpMat;
                     scene->materialData.push_back(material);
                 }
             }

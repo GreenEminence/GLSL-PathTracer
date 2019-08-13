@@ -31,7 +31,8 @@ namespace GLSLPathTracer
             {
                 int index = bvh->getTriIndices()[i];
                 const Vec3i& vtxInds = bvh->getScene()->getTriangle(index).vertices;
-                bvhTriangleIndices.push_back(TriIndexData{ glm::vec4(vtxInds.x,vtxInds.y,vtxInds.z, index) });
+                TriIndexData triInd = { glm::vec4(vtxInds.x,vtxInds.y,vtxInds.z, index) };
+                bvhTriangleIndices.push_back(triInd);
             }
         }
         else
